@@ -167,7 +167,7 @@ $router->get("i/web/status/(\d+)", [], function ($id){generatePreview($id);});
  * forward to github to readme etc
  */
 $router->get("/", [], function () use($config) {
-    $url = "http://github.com/littleCdev";
+    $url = "https://github.com/littleCdev/vstwitter";
 
     if ($config["devmode"]) {
         echo "this would forward normally to: " . $url;
