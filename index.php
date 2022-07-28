@@ -41,7 +41,7 @@ function getVideoUrl(\Twifer\API $api, $tweetId): string
 }
 
 
-function generatePreview($tweetId) {
+function generatePreview($tweetId,$preferedPhoto = 1) {
     global $knownbotheaders, $config;
     $useragent = strtolower($_SERVER["HTTP_USER_AGENT"]);
 
@@ -118,9 +118,18 @@ function generatePreview($tweetId) {
         if ($result["includes"]["media"][0]["type"] == "photo") {
             $tweetType = "photo";
             $photourl = $result["includes"]["media"][0]["url"];
-            if (count($result["includes"]["media"]) > 1) {
+            $mediaCount = count($result["includes"]["media"]);
+            if ( $mediaCount > 1) {
                 $appendSiteName = "1/" . count($result["includes"]["media"]) . " 📷";
             }
+
+            if($preferedPhoto > 1 && $preferedPhoto<= 4){
+                echo "hier";
+                if($mediaCount >= $preferedPhoto){
+                    $photourl = $result["includes"]["media"][$preferedPhoto-1]["url"];
+                }
+            }       
+
         }else{
             // video/animation
             $tweetType = "video";
@@ -161,6 +170,7 @@ function generatePreview($tweetId) {
 $router = new \Bramus\Router\Router();
 $router->get(".+/status/(\d+)", [], function ($id){generatePreview($id);});
 $router->get(".+/statuses/(\d+)", [], function ($id){generatePreview($id);});
+$router->get(".+/status/(\d+)/photo/(\d+)", [], function ($id,$preferedPhoto){generatePreview($id,$preferedPhoto);});
 $router->get("i/web/status/(\d+)", [], function ($id){generatePreview($id);});
 
 /**
